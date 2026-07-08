@@ -1,5 +1,4 @@
-// This library was partially code-generated using an experimental CDDL to rust tool:
-// https://github.com/Emurgo/cddl-codegen
+// This library was partially code-generated using an experimental CDDL to Rust tool.
 
 use std::io::{BufRead, Write};
 use linked_hash_map::LinkedHashMap;
@@ -1002,5 +1001,19 @@ mod tests {
         assert_eq!(signed_message.to_bytes(), pad1.to_bytes());
         assert_eq!(pad1.to_bytes(), pad2.to_bytes());
         assert_eq!(pad2.to_bytes(), pad3.to_bytes());
+
+        assert!(SignedMessage::from_user_facing_encoding(&user_facing_encoding[4..]).is_err());
+        assert!(SignedMessage::from_user_facing_encoding("cms_short").is_err());
+
+        let mut corrupted_checksum = user_facing_encoding.clone().into_bytes();
+        let checksum_index = corrupted_checksum.len() - 1;
+        corrupted_checksum[checksum_index] = if corrupted_checksum[checksum_index] == b'A' { b'B' } else { b'A' };
+        let corrupted_checksum = String::from_utf8(corrupted_checksum).unwrap();
+        assert!(SignedMessage::from_user_facing_encoding(&corrupted_checksum).is_err());
+
+        let mut corrupted_body = user_facing_encoding.clone().into_bytes();
+        corrupted_body[4] = if corrupted_body[4] == b'A' { b'B' } else { b'A' };
+        let corrupted_body = String::from_utf8(corrupted_body).unwrap();
+        assert!(SignedMessage::from_user_facing_encoding(&corrupted_body).is_err());
     }
 }

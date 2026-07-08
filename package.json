@@ -1,46 +1,42 @@
 {
-  "name": "cardano-message-signing",
+  "name": "@yoroi-classic/cardano-message-signing",
   "version": "1.1.0",
+  "private": true,
   "description": "Message signing standard for Cardano",
   "scripts": {
-    "rust:build-nodejs": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh nodejs && npm run js:flowgen",
-    "rust:build-browser": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh browser && npm run js:flowgen",
-    "rust:build-web": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh web && npm run js:flowgen",
-    "rust:build-asm": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh browser && npm run asm:build && npm run js:flowgen",
-    "rust:build-nodejs:gc": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh nodejs --gc && npm run js:flowgen",
-    "rust:build-browser:gc": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh browser --gc && npm run js:flowgen",
-    "rust:build-web:gc": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh web --gc && npm run js:flowgen",
-    "rust:build-asm:gc": "rimraf ./rust/pkg && ./scripts/wasm-build-with-rename.sh browser --gc && npm run asm:build && npm run js:flowgen",
-    "rust:publish": "cd rust && cargo publish && cd ../",
+    "rust:build-nodejs": "rimraf ./rust/pkg && ./scripts/wasm-build.sh nodejs && npm run js:flowgen",
+    "rust:build-browser": "rimraf ./rust/pkg && ./scripts/wasm-build.sh browser && npm run js:flowgen",
+    "rust:build-web": "rimraf ./rust/pkg && ./scripts/wasm-build.sh web && npm run js:flowgen",
+    "rust:build-asm": "rimraf ./rust/pkg && ./scripts/wasm-build.sh browser && npm run asm:build && npm run js:flowgen",
+    "rust:build-nodejs:gc": "rimraf ./rust/pkg && ./scripts/wasm-build.sh nodejs --gc && npm run js:flowgen",
+    "rust:build-browser:gc": "rimraf ./rust/pkg && ./scripts/wasm-build.sh browser --gc && npm run js:flowgen",
+    "rust:build-web:gc": "rimraf ./rust/pkg && ./scripts/wasm-build.sh web --gc && npm run js:flowgen",
+    "rust:build-asm:gc": "rimraf ./rust/pkg && ./scripts/wasm-build.sh browser --gc && npm run asm:build && npm run js:flowgen",
+    "rust:package": "cd rust && cargo package --allow-dirty && cd ../",
     "asm:build": "./binaryen/bin/wasm2js ./rust/pkg/cardano_message_signing_bg.wasm --output ./rust/pkg/cardano_message_signing.asm.js && node ./scripts/wasm-to-asm  && node ./scripts/fix-buffer-ref.js",
     "rust:check-warnings": "(cd rust; RUSTFLAGS=\"-D warnings\" cargo +stable build)",
     "rust:test": "(cd rust; cargo test)",
     "js:flowgen": "flowgen ./rust/pkg/cardano_message_signing.d.ts -o ./rust/pkg/cardano_message_signing.js.flow --add-flow-header",
-    "js:prepublish": "npm run rust:test && rimraf ./publish && cp -r ./rust/pkg ./publish && cp README.md publish/ && cp LICENSE publish/",
-    "js:publish-nodejs:prod:no-gc": "npm run rust:build-nodejs && npm run js:prepublish && node ./scripts/publish-helper -nodejs && cd publish && npm publish --access public",
-    "js:publish-nodejs:beta:no-gc": "npm run rust:build-nodejs && npm run js:prepublish && node ./scripts/publish-helper -nodejs && cd publish && npm publish --tag beta --access public",
-    "js:publish-browser:prod:no-gc": "npm run rust:build-browser && npm run js:prepublish && node ./scripts/publish-helper -browser && cd publish && npm publish --access public",
-    "js:publish-browser:beta:no-gc": "npm run rust:build-browser && npm run js:prepublish && node ./scripts/publish-helper -browser && cd publish && npm publish --tag beta --access public",
-    "js:publish-asm:prod:no-gc": "npm run rust:build-asm && npm run js:prepublish && node ./scripts/publish-helper -asmjs && cd publish && npm publish --access public",
-    "js:publish-asm:beta:no-gc": "npm run rust:build-asm && npm run js:prepublish && node ./scripts/publish-helper -asmjs && cd publish && npm publish --tag beta --access public",
-    "js:publish-nodejs:prod:gc": "npm run rust:build-nodejs:gc && npm run js:prepublish && node ./scripts/publish-helper -nodejs -gc && cd publish && npm publish --access public",
-    "js:publish-nodejs:beta:gc": "npm run rust:build-nodejs:gc && npm run js:prepublish && node ./scripts/publish-helper -nodejs -gc && cd publish && npm publish --tag beta --access public",
-    "js:publish-browser:prod:gc": "npm run rust:build-browser:gc && npm run js:prepublish && node ./scripts/publish-helper -browser -gc && cd publish && npm publish --access public",
-    "js:publish-browser:beta:gc": "npm run rust:build-browser:gc && npm run js:prepublish && node ./scripts/publish-helper -browser -gc && cd publish && npm publish --tag beta --access public",
-    "js:publish-asm:prod:gc": "npm run rust:build-asm:gc && npm run js:prepublish && node ./scripts/publish-helper -asmjs -gc && cd publish && npm publish --access public",
-    "js:publish-asm:beta:gc": "npm run rust:build-asm:gc && npm run js:prepublish && node ./scripts/publish-helper -asmjs -gc && cd publish && npm publish --tag beta --access public",
-    "postinstall": "git submodule update --init --recursive && cd binaryen; cmake . && make"
+    "js:prepack": "npm run rust:test && rimraf ./publish && cp -r ./rust/pkg ./publish && cp README.md publish/ && cp LICENSE publish/",
+    "js:pack-nodejs:no-gc": "npm run rust:build-nodejs && npm run js:prepack && node ./scripts/package-helper -nodejs && cd publish && npm pack",
+    "js:pack-browser:no-gc": "npm run rust:build-browser && npm run js:prepack && node ./scripts/package-helper -browser && cd publish && npm pack",
+    "js:pack-asm:no-gc": "npm run rust:build-asm && npm run js:prepack && node ./scripts/package-helper -asmjs && cd publish && npm pack",
+    "js:pack-nodejs:gc": "npm run rust:build-nodejs:gc && npm run js:prepack && node ./scripts/package-helper -nodejs -gc && cd publish && npm pack",
+    "js:pack-browser:gc": "npm run rust:build-browser:gc && npm run js:prepack && node ./scripts/package-helper -browser -gc && cd publish && npm pack",
+    "js:pack-asm:gc": "npm run rust:build-asm:gc && npm run js:prepack && node ./scripts/package-helper -asmjs -gc && cd publish && npm pack",
+    "test:package-helper": "node ./scripts/package-helper.test.js",
+    "verify": "npm run test:package-helper && npm run rust:test"
   },
   "husky": {
     "hooks": {
       "pre-push": "npm run rust:test && npm run rust:build-nodejs"
     }
   },
-  "author": "EMURGO",
+  "author": "Yoroi Classic Contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Emurgo/message-signing.git"
+    "url": "git+https://github.com/yoroi-classic/message-signing.git"
   },
   "dependencies": {},
   "devDependencies": {

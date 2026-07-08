@@ -4,19 +4,24 @@ This is a library that implements the [CIP-0008](https://github.com/cardano-foun
 
 The library is composed of structs for (de)serializing the CBOR defined in CIP-0008/COSE which lays at the core of the protocol, mostly defined in `lib.rs`, as well as many helper utilities for more specific cases useful to CIP-0008. These are mostly in `builders.rs` for building the CBOR structures specific to certain algorithms.
 
-##### NPM packages
+##### Package artifacts
 
-- [NodeJS WASM package](https://www.npmjs.com/package/@emurgo/cardano-message-signing-nodejs)
-- [Browser (chrome/firefox) WASM package](https://www.npmjs.com/package/@emurgo/cardano-message-signing-browser)
-- [Browser (pure JS - no WASM) ASM.js package](https://www.npmjs.com/package/@emurgo/cardano-message-signing-asmjs)
+This repository builds local package artifacts under owned package names:
+
+- `@yoroi-classic/cardano-message-signing-nodejs`
+- `@yoroi-classic/cardano-message-signing-browser`
+- `@yoroi-classic/cardano-message-signing-asmjs`
+
+The project is not published to npmjs. Pin source checkouts to GitHub refs and
+consume local tarballs generated from this repository.
 
 ##### Crate
 
-- [Rust crate](https://crates.io/crates/emurgo-cardano-message-signing)
+- Rust crate name: `cardano-message-signing`
 
 ##### Mobile bindings 
 
-- [React-Native mobile bindings](https://www.npmjs.com/package/@emurgo/msl-mobile-bridge)
+- React-Native mobile bindings are tracked in `yoroi-classic/csl-mobile-bridge`.
 
 ## Building
 
@@ -31,6 +36,12 @@ In the meantime to build a wasm package we can run one of
 * `npm run asm:build` for conversion for asm.js
 
 and for use from rust simply use the lib that resides in `/rust/`.
+
+To create local JS package tarballs instead of publishing to npmjs, run one of:
+
+* `npm run js:pack-nodejs:no-gc`
+* `npm run js:pack-browser:no-gc`
+* `npm run js:pack-asm:no-gc`
 
 
 
