@@ -1,8 +1,8 @@
 [package]
-name = "emurgo-cardano-message-signing"
+name = "cardano-message-signing"
 version = "1.1.0"
 edition = "2018"
-authors = ["EMURGO"]
+authors = ["Yoroi Classic Contributors"]
 license = "MIT"
 description = "Message signing standard for Cardano"
 
