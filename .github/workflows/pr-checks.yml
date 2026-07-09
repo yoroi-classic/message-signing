@@ -1,12 +1,20 @@
 name: PR Checks
 
 on:
+  pull_request:
+    paths:
+      - '.github/dependabot.yml'
+      - '.github/workflows/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'rust/**'
+      - 'scripts/**'
   pull_request_review:
     types: [submitted]
 
 jobs:
   test-and-build:
-    if: github.event.review && (github.event.review.state == 'approved' || contains(github.event.review.body, '/check'))
+    if: github.event_name == 'pull_request' || (github.event.review && (github.event.review.state == 'approved' || contains(github.event.review.body, '/check')))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,17 +40,23 @@ jobs:
       - name: install
         run: |
           npm install
+      - name: test:package-helper
+        run: |
+          npm run test:package-helper
+      - name: test:package-asm-fixture
+        run: |
+          npm run test:package-asm-fixture
       - name: rust:test
         run: |
           npm run rust:test
-      - name: rust:build-nodejs
+      - name: test:package-nodejs
         run: |
-          npm run rust:build-nodejs
-      - name: rust:build-browser
+          npm run test:package-nodejs
+      - name: test:package-browser
         run: |
-          npm run rust:build-browser
+          npm run test:package-browser
   check-warns:
-    if: github.event.review && (github.event.review.state == 'approved' || contains(github.event.review.body, '/check'))
+    if: github.event_name == 'pull_request' || (github.event.review && (github.event.review.state == 'approved' || contains(github.event.review.body, '/check')))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

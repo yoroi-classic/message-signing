@@ -24,8 +24,13 @@
     "js:pack-nodejs:gc": "npm run rust:build-nodejs:gc && npm run js:prepack && node ./scripts/package-helper -nodejs -gc && cd publish && npm pack",
     "js:pack-browser:gc": "npm run rust:build-browser:gc && npm run js:prepack && node ./scripts/package-helper -browser -gc && cd publish && npm pack",
     "js:pack-asm:gc": "npm run rust:build-asm:gc && npm run js:prepack && node ./scripts/package-helper -asmjs -gc && cd publish && npm pack",
+    "test:package-nodejs": "npm run rust:build-nodejs && node ./scripts/package-surface.test.js nodejs",
+    "test:package-browser": "npm run rust:build-browser && node ./scripts/package-surface.test.js browser",
+    "test:package-asm": "npm run rust:build-asm && node ./scripts/package-surface.test.js asmjs",
+    "test:package-asm-fixture": "node ./scripts/asm-package.test.js",
     "test:package-helper": "node ./scripts/package-helper.test.js",
-    "verify": "npm run test:package-helper && npm run rust:test"
+    "test:packages": "npm run test:package-nodejs && npm run test:package-browser && npm run test:package-asm && npm run test:package-asm-fixture",
+    "verify": "npm run test:package-helper && npm run test:package-asm-fixture && npm run rust:test"
   },
   "husky": {
     "hooks": {

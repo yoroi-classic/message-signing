@@ -1,22 +1,26 @@
-const fs = require('fs')
+const fs = require('fs');
+const path = require('path');
 
-const paths = [
-  './rust/pkg/cardano_message_signing_bg.js',
-  './rust/pkg/cardano_message_signing.js'
-]
+function replaceWasmWithAsm(pkgDir = path.join(__dirname, '..', 'rust', 'pkg')) {
+  const paths = [
+    path.join(pkgDir, 'cardano_message_signing_bg.js'),
+    path.join(pkgDir, 'cardano_message_signing.js'),
+  ];
 
-paths.forEach((path) => {
-  fs.readFile(path, 'utf8', (err,data) => {
-    if (err) {
-      return console.log(err);
-    }
+  paths.forEach((file) => {
+    const data = fs.readFileSync(file, 'utf8');
+    const result = data.replace(/_bg.wasm/g, '.asm.js');
 
-    const  result = data.replace(/_bg.wasm/g, '.asm.js');
-
-    fs.writeFile(path, result, 'utf8', (err) => {
-      if (err) return console.log(err);
-    });
+    fs.writeFileSync(file, result, 'utf8');
   });
-})
 
-fs.unlinkSync('./rust/pkg/cardano_message_signing_bg.wasm')
+  fs.unlinkSync(path.join(pkgDir, 'cardano_message_signing_bg.wasm'));
+}
+
+if (require.main === module) {
+  replaceWasmWithAsm();
+}
+
+module.exports = {
+  replaceWasmWithAsm,
+};
