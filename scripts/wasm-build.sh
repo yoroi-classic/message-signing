@@ -7,6 +7,8 @@
 
 set -euo pipefail
 
+WASM_PACK_VERSION="${WASM_PACK_VERSION:-0.15.0}"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 RUST_DIR="$PROJECT_ROOT/rust"
@@ -41,6 +43,17 @@ fi
 
 # Build
 cd "$RUST_DIR"
+
+if ! command -v wasm-pack >/dev/null 2>&1; then
+    echo "Error: wasm-pack $WASM_PACK_VERSION is required. Run npm run setup:wasm-pack."
+    exit 1
+fi
+
+INSTALLED_WASM_PACK_VERSION="$(wasm-pack --version | awk '{print $2}')"
+if [ "$INSTALLED_WASM_PACK_VERSION" != "$WASM_PACK_VERSION" ]; then
+    echo "Error: wasm-pack $WASM_PACK_VERSION is required, found $INSTALLED_WASM_PACK_VERSION."
+    exit 1
+fi
 
 if [ -n "$GC_FLAG" ]; then
     echo "Building with WASM_BINDGEN_WEAKREF=1 --target=$TARGET..."

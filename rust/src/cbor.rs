@@ -731,8 +731,8 @@ mod tests {
         assert_eq!(spec_arr_indef, spec_arr_from_ce_indef);
     }
 
+    #[allow(dead_code)]
     fn cbor_other_object() {
-        type CES = cbor_event::Special;
         type CEV = cbor_event::Value;
         type CEK = cbor_event::ObjectKey;
 

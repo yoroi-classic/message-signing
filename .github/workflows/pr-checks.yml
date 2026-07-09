@@ -1,12 +1,17 @@
 name: PR Checks
 
+env:
+  WASM_PACK_VERSION: '0.15.0'
+
 on:
   pull_request:
     paths:
       - '.github/dependabot.yml'
       - '.github/workflows/**'
+      - '.nvmrc'
       - 'package.json'
       - 'package-lock.json'
+      - 'rust-toolchain.toml'
       - 'rust/**'
       - 'scripts/**'
   pull_request_review:
@@ -17,29 +22,28 @@ jobs:
     if: github.event_name == 'pull_request' || (github.event.review && (github.event.review.state == 'approved' || contains(github.event.review.body, '/check')))
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: 'recursive'
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '18'
-      - name: Cache node modules
-        uses: actions/cache@v3
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - name: Cache cargo tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          path: |
+            ~/.cargo/bin/wasm-pack
+            ~/.cargo/git
+            ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-tools-wasm-pack-${{ env.WASM_PACK_VERSION }}-${{ hashFiles('rust-toolchain.toml') }}
       - name: prepare-rust
         run: |
-          rustup install stable
-          rustup target add wasm32-unknown-unknown --toolchain stable
-          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          rustup show
+          npm run setup:wasm-pack
       - name: install
         run: |
-          npm install
+          npm ci
       - name: test:package-helper
         run: |
           npm run test:package-helper
@@ -59,26 +63,16 @@ jobs:
     if: github.event_name == 'pull_request' || (github.event.review && (github.event.review.state == 'approved' || contains(github.event.review.body, '/check')))
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: 'recursive'
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '18'
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          node-version-file: '.nvmrc'
+          cache: 'npm'
       - name: prepare-rust
         run: |
-          rustup install stable
-          rustup target add wasm32-unknown-unknown --toolchain stable
-          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          rustup show
       - name: rust:check-warnings
         run: |
           npm run rust:check-warnings
