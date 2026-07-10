@@ -1158,8 +1158,18 @@ mod tests {
             CounterSignature::new_single(&s)
         };
         header_map.set_counter_signature(&counter_sig);
-        let _ = header_map.set_header(&label_str("i am a string key"), &CBORValue::new_text(String::from("also a string")));
-        let _ = header_map.set_header(&label_int(-6), &CBORValue::new_tagged(&TaggedCBOR::new(&to_bignum(3u64), &CBORValue::new_special(&CBORSpecial::new_null()))));
+        header_map
+            .set_header(&label_str("i am a string key"), &CBORValue::new_text(String::from("also a string")))
+            .expect("string-labeled header should be accepted");
+        header_map
+            .set_header(
+                &label_int(-6),
+                &CBORValue::new_tagged(&TaggedCBOR::new(
+                    &to_bignum(3u64),
+                    &CBORValue::new_special(&CBORSpecial::new_null()),
+                )),
+            )
+            .expect("integer-labeled tagged header should be accepted");
         deser_test(header_map);
     }
 
@@ -1230,8 +1240,12 @@ mod tests {
         key_ops.add(&label_str("sadsddfd"));
         key_ops.add(&label_int(-100));
         cose_key.set_key_ops(&key_ops);
-        let _ = cose_key.set_header(&label_str("dsfdsf"), &CBORValue::new_int(&Int::new_i32(-100)));
-        let _ = cose_key.set_header(&label_int(-50), &CBORValue::new_text(String::from("134da2234fdsfd")));
+        cose_key
+            .set_header(&label_str("dsfdsf"), &CBORValue::new_int(&Int::new_i32(-100)))
+            .expect("string-labeled key header should be accepted");
+        cose_key
+            .set_header(&label_int(-50), &CBORValue::new_text(String::from("134da2234fdsfd")))
+            .expect("integer-labeled key header should be accepted");
         deser_test(cose_key);
     }
 

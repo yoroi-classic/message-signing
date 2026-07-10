@@ -731,18 +731,24 @@ mod tests {
         assert_eq!(spec_arr_indef, spec_arr_from_ce_indef);
     }
 
-    #[allow(dead_code)]
+    #[test]
     fn cbor_other_object() {
         type CEV = cbor_event::Value;
         type CEK = cbor_event::ObjectKey;
 
         let mut ceo = std::collections::BTreeMap::new();
         ceo.insert(CEK::Bytes(vec![8u8, 7u8, 6u8, 5u8, 4u8, 3u8, 2u8, 1u8, 0u8]), CEV::U64(322u64));
-        ceo.insert(CEK::Text(String::from("some_string_key")), CEV::Tag(100u64, Box::new(CEV::I64(-7))));
+        ceo.insert(
+            CEK::Text(String::from("some_string_key")),
+            CEV::Array(vec![CEV::U64(100u64), CEV::I64(-7)]),
+        );
 
         let mut vals = CBORObject::new();
         vals.insert(&CBORValue::new_bytes(vec![8u8, 7u8, 6u8, 5u8, 4u8, 3u8, 2u8, 1u8, 0u8]), &CBORValue::new_int(&Int::new_i32(322)));
-        vals.insert(&CBORValue::new_text(String::from("some_string_key")), &CBORValue::new_tagged(&TaggedCBOR::new(&to_bignum(100u64), &CBORValue::new_int(&Int::new_i32(-7)))));
+        let mut nested_vals = CBORArray::new();
+        nested_vals.add(&CBORValue::new_int(&Int::new_i32(100)));
+        nested_vals.add(&CBORValue::new_int(&Int::new_i32(-7)));
+        vals.insert(&CBORValue::new_text(String::from("some_string_key")), &CBORValue::new_array(&nested_vals));
 
         // definite encoding
         let ce_obj_def = CEV::Object(ceo.clone());

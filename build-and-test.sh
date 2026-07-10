@@ -1,6 +1,10 @@
 #!/bin/bash
 
-set -euo pipefail
+build_and_test() (
+    set -euo pipefail
 
-./test.sh
-npm run rust:build-nodejs
+    ./test.sh
+    npm run rust:build-nodejs
+)
+
+build_and_test "$@"
