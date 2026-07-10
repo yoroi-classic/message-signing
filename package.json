@@ -9,7 +9,7 @@
     "npm": ">=10 <12"
   },
   "scripts": {
-    "setup:wasm-pack": "WASM_PACK_VERSION=0.15.0 ./scripts/install-wasm-pack.sh",
+    "setup:wasm-pack": "./scripts/install-wasm-pack.sh",
     "rust:build-nodejs": "rimraf ./rust/pkg && ./scripts/wasm-build.sh nodejs && npm run js:flowgen",
     "rust:build-browser": "rimraf ./rust/pkg && ./scripts/wasm-build.sh browser && npm run js:flowgen",
     "rust:build-web": "rimraf ./rust/pkg && ./scripts/wasm-build.sh web && npm run js:flowgen",

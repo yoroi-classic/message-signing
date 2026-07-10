@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-WASM_PACK_VERSION="${WASM_PACK_VERSION:-0.15.0}"
+WASM_PACK_VERSION="0.15.0"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"

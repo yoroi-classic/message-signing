@@ -771,4 +771,23 @@ mod tests {
         let obj_from_ce_indef = CBORValue::from_bytes(ce_bytes_indef).unwrap();
         assert_eq!(obj_indef, obj_from_ce_indef);
     }
+
+    #[test]
+    fn cbor_tagged_value_encoding() {
+        type CEV = cbor_event::Value;
+
+        let ce_tagged = CEV::Array(vec![CEV::U64(100u64), CEV::I64(-7)]);
+        let tagged = TaggedCBOR::new(
+            &to_bignum(100),
+            &CBORValue::new_int(&Int::new_i32(-7)),
+        );
+        let tagged_value = CBORValue::new_tagged(&tagged);
+
+        let ce_bytes = ce_value_to_bytes(&ce_tagged);
+        assert_eq!(ce_bytes, tagged_value.to_bytes());
+
+        let tagged_from_ce = TaggedCBOR::from_bytes(ce_bytes).unwrap();
+        assert_eq!(tagged, tagged_from_ce);
+        assert_eq!(tagged, tagged_value.as_tagged().unwrap());
+    }
 }

@@ -1,8 +1,5 @@
 name: PR Checks
 
-env:
-  WASM_PACK_VERSION: '0.15.0'
-
 on:
   pull_request:
     paths:
@@ -29,6 +26,11 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
+      - name: setup npm
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+          npm --version
       - name: Cache cargo tools
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -36,7 +38,7 @@ jobs:
             ~/.cargo/bin/wasm-pack
             ~/.cargo/git
             ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-tools-wasm-pack-${{ env.WASM_PACK_VERSION }}-${{ hashFiles('rust-toolchain.toml') }}
+          key: ${{ runner.os }}-cargo-tools-${{ hashFiles('rust-toolchain.toml', 'scripts/install-wasm-pack.sh', 'scripts/wasm-build.sh') }}
       - name: prepare-rust
         run: |
           rustup show
@@ -70,6 +72,18 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
+      - name: setup npm
+        run: |
+          corepack enable
+          corepack prepare npm@10.9.7 --activate
+          npm --version
+      - name: Cache cargo registry
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/git
+            ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('rust/Cargo.lock', 'rust-toolchain.toml') }}
       - name: prepare-rust
         run: |
           rustup show

@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-WASM_PACK_VERSION="${WASM_PACK_VERSION:-0.15.0}"
+WASM_PACK_VERSION="0.15.0"
 
 if command -v wasm-pack >/dev/null 2>&1; then
     INSTALLED_VERSION="$(wasm-pack --version | awk '{print $2}')"

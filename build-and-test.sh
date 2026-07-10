@@ -3,7 +3,7 @@
 build_and_test() (
     set -euo pipefail
 
-    ./test.sh
+    . ./test.sh
     npm run rust:build-nodejs
 )
 
