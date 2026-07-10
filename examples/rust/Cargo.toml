@@ -5,4 +5,4 @@ edition = "2018"
 
 [dependencies]
 cardano-message-signing = { path = "../../rust" }
-cardano-serialization-lib = "7.0.0"
+cml-crypto = "6.2.0"
