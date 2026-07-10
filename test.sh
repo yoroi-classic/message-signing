@@ -14,7 +14,7 @@ if ! command -v nvm >/dev/null 2>&1; then
 fi
 
 nvm install
-corepack enable
+corepack enable npm
 corepack prepare npm@10.9.7 --activate
 npm ci
 npm run setup:wasm-pack

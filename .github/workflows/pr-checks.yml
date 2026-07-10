@@ -28,7 +28,7 @@ jobs:
           cache: 'npm'
       - name: setup npm
         run: |
-          corepack enable
+          corepack enable npm
           corepack prepare npm@10.9.7 --activate
           npm --version
       - name: Cache cargo tools
@@ -74,7 +74,7 @@ jobs:
           cache: 'npm'
       - name: setup npm
         run: |
-          corepack enable
+          corepack enable npm
           corepack prepare npm@10.9.7 --activate
           npm --version
       - name: Cache cargo registry
