@@ -23,11 +23,18 @@ consume local tarballs generated from this repository.
 
 - React-Native mobile bindings are tracked in `yoroi-classic/csl-mobile-bridge`.
 
+## Supported toolchain
+
+- Node.js: `22.22.2` for local and CI builds, with package metadata allowing maintained Node 22 and 24 LTS lines.
+- npm: `10.9.7`, managed through the package manager metadata.
+- Rust: `1.92.0`, pinned in `rust-toolchain.toml` with the `wasm32-unknown-unknown` target.
+- wasm-pack: `0.15.0`, installed by `npm run setup:wasm-pack`.
+
 ## Building
 
 It can be used from both rust or compiled to wasm as all public code works with `wasm-bindgen` via `wasm-pack`.
 
-There are no rust crates/npm packages uploaded yet, but these will come in the future.
+This repository builds local artifacts only; it does not publish npm packages or crates.
 
 In the meantime to build a wasm package we can run one of
 
