@@ -1,14 +1,15 @@
 use cardano_message_signing as ms;
-use cardano_serialization_lib as csl;
+use cml_crypto as cml;
 
 fn main() {
+    use cml::RawBytesEncoding;
     use ms::utils::ToBytes;
     // 1) Create some arbitrary keys/message just so we can run this example
     let sk_bytes: [u8; 32] = [
          34, 125,  55,  10, 222, 244,  31,  91, 181, 231,  62,  80,  90,  53, 246, 160,
         226, 111, 123, 228, 188,  90,  15, 130, 210, 206,  78, 199, 209,  18, 202, 234
     ];
-    let sk = csl::crypto::PrivateKey::from_normal_bytes(&sk_bytes).unwrap();
+    let sk = cml::PrivateKey::from_normal_bytes(&sk_bytes).unwrap();
     let pk = sk.to_public();
     let payload = "message to sign".as_bytes().to_vec();
     // We can also optionally supply external data which is not included
@@ -18,7 +19,7 @@ fn main() {
 
     // 2) Creating a simple signed message
     // protected headers are those that are actually signed
-    let mut protected_headers = ms::HeaderMap::new();
+    let protected_headers = ms::HeaderMap::new();
     let protected_serialized = ms::ProtectedHeaderMap::new(&protected_headers);
     let unprotected = ms::HeaderMap::new();
     let headers = ms::Headers::new(&protected_serialized, &unprotected);
@@ -32,7 +33,7 @@ fn main() {
     let to_sign = builder.make_data_to_sign().to_bytes();
     // it is important that we sign using Ed25519 keys in accordance to the spec
     // make sure your key is not in the X25519 format.
-    let signed_sig_struct = sk.sign(&to_sign).to_bytes();
+    let signed_sig_struct = sk.sign(&to_sign).to_raw_bytes().to_vec();
     // then once we have signed that we can build the final COSESign1 result to be shared
     let cose_sign1 = builder.build(signed_sig_struct);
 
@@ -40,10 +41,10 @@ fn main() {
     // Any user here should carefully inspect the headers / payload
     // to make sure they are verifying the correct sign object
     // (not shown here for simplicity)
-    let payload_to_verify = cose_sign1.payload();
-    let headers_to_verify = cose_sign1.headers();
+    let _payload_to_verify = cose_sign1.payload();
+    let _headers_to_verify = cose_sign1.headers();
     // Reconstruct the SigStructure object so we can verify the signature
     let sig_struct_reconstructed = cose_sign1.signed_data(Some(external_aad), None).unwrap().to_bytes();
-    let sig = csl::crypto::Ed25519Signature::from_bytes(cose_sign1.signature()).unwrap();
+    let sig = cml::Ed25519Signature::from_raw_bytes(&cose_sign1.signature()).unwrap();
     assert!(pk.verify(&sig_struct_reconstructed, &sig));
 }
