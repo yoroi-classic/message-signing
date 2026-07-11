@@ -9,6 +9,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'rust-toolchain.toml'
+      - 'examples/**'
       - 'rust/**'
       - 'scripts/**'
   pull_request_review:
@@ -58,6 +59,9 @@ jobs:
       - name: rust:test
         run: |
           npm run rust:test
+      - name: examples:rust:run
+        run: |
+          npm run examples:rust:run
       - name: test:package-nodejs
         run: |
           npm run test:package-nodejs
@@ -93,3 +97,6 @@ jobs:
       - name: rust:check-warnings
         run: |
           npm run rust:check-warnings
+      - name: examples:rust:check-warnings
+        run: |
+          npm run examples:rust:check-warnings
