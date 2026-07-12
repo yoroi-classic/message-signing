@@ -90,7 +90,7 @@ jobs:
           path: |
             ~/.cargo/git
             ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('rust/Cargo.lock', 'rust-toolchain.toml') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('rust/Cargo.lock', 'examples/rust/Cargo.lock', 'rust-toolchain.toml') }}
       - name: prepare-rust
         run: |
           rustup show
